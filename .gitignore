@@ -1,0 +1,10 @@
+**/*.suo
+obj/
+bin/
+.ds_store*
+packages/
+.vs/
+node_modules/
+*.user
+PublishProfiles/
+*.orig

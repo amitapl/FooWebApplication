@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Foo Web Application</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <h1>Foo Web Application</h1>
+    <button id="something">Do Something</button>
+    <button id="logs">Produce Logs</button>
+    <button id="error500">Produce 500 Error</button>
+    <button id="error404">Produce 404 Error</button>
+
+    <h3>Response</h3>
+    <div id="response">...</div>
+
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+        function addClickFunction(id, url) {
+            $(id).click(function () {
+                $.getJSON(url,
+                    function (data) {
+                        $('#response').html(JSON.stringify(data));
+                    });
+            });
+        }
+
+        $(function () {
+            addClickFunction('#something', 'api/something');
+            addClickFunction('#logs', 'api/logs');
+            addClickFunction('#error500', 'api/error');
+            addClickFunction('#error404', 'api/error404');
+        });
+    </script>
+</body>
+</html>

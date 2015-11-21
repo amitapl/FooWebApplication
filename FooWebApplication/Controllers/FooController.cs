@@ -21,11 +21,14 @@ namespace FooWebApplication.Controllers
             {
                 var name = await _fooService.GetRandomName();
 
+                // Log to the story
+                Storytelling.Info("Prepare something object");
                 object something = new
                 {
                     Name = name
                 };
 
+                // Add data to story
                 Storytelling.Data["something"] = something;
 
                 return Request.CreateResponse(something);

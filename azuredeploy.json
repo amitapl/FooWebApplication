@@ -1,0 +1,97 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "siteName": {
+      "type": "string"
+    },
+    "hostingPlanName": {
+      "type": "string"
+    },
+    "siteLocation": {
+      "type": "string"
+    },
+    "azureConnectionString": {
+      "type": "string",
+      "defaultValue": "Enter your azure storage connection string here"
+    },
+    "repoUrl": {
+      "type": "string"
+    },
+    "branch": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2014-06-01",
+      "name": "[parameters('hostingPlanName')]",
+      "type": "Microsoft.Web/serverFarms",
+      "location": "[parameters('siteLocation')]",
+      "properties": {
+        "name": "[parameters('hostingPlanName')]",
+        "sku": "Free",
+        "workerSize": "0",
+        "numberOfWorkers": 1
+      }
+    },
+    {
+      "apiVersion": "2014-06-01",
+      "name": "[parameters('siteName')]",
+      "type": "Microsoft.Web/Sites",
+      "location": "[parameters('siteLocation')]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverFarms/', parameters('hostingPlanName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]": "empty"
+      },
+      "properties": {
+        "name": "[parameters('siteName')]",
+        "serverFarm": "[parameters('hostingPlanName')]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2014-04-01",
+          "type": "config",
+          "name": "web",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/', parameters('siteName'))]"
+          ],
+          "properties": {
+            "connectionStrings": [
+              {
+                "name": "StoryRulesetPath",
+                "value": "[parameters('azureConnectionString')]"
+              }
+            ]
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "websitelogs",
+          "type": "siteextensions",
+          "dependsOn": [
+            "[parameters('siteName')]"
+          ],
+          "properties": {
+          }
+        },
+        {
+          "apiVersion": "2014-04-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('siteName'))]",
+            "[concat('Microsoft.Web/Sites/', parameters('siteName'), '/config/web')]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('repoUrl')]",
+            "branch": "[parameters('branch')]",
+            "IsManualIntegration": true
+          }
+        }
+      ]
+    }
+  ]
+}

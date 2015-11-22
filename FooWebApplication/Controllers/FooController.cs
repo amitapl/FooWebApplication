@@ -17,7 +17,7 @@ namespace FooWebApplication.Controllers
         [HttpGet]
         public Task<HttpResponseMessage> GetSomething()
         {
-            return Storytelling.Factory.StartNewAsync("GetUser", async () =>
+            return Storytelling.Factory.StartNewAsync("GetSomething", async () =>
             {
                 var name = await _fooService.GetRandomName();
 
